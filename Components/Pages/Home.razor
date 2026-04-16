@@ -43,6 +43,8 @@
 <MudAlert Severity="Severity.Success">@result</MudAlert>
 
 @code {
+
+
 public double Pregnancies { get; set; } = 5;
 public double Glucose { get; set; } = 100;
 public double BloodPressure { get; set; } = 80;
@@ -52,28 +54,40 @@ public double BMI { get; set; } = 25;
 public double DiabetesPedigreeFunction { get; set; } = 0.5;
 public double Age { get; set; } = 30;
 
-
 public string result = "";
 
 public void DoCalculations()
 {
-    var sampleData = new SampleClassification.ModelInput()
+    try
     {
-        Pregnancies = (float)Pregnancies,
-        Glucose = (float)Glucose,
-        BloodPressure = (float)BloodPressure,
-        SkinThickness = (float)SkinThickness,
-        Insulin = (float)Insulin,
-        BMI = (float)BMI,
-        DiabetesPedigreeFunction = (float)DiabetesPedigreeFunction,
-        Age = (float)Age
-    };
+        var sampleData = new SampleClassification.ModelInput()
+        {
+            Pregnancies = (float)Pregnancies,
+            Glucose = (float)Glucose,
+            BloodPressure = (float)BloodPressure,
+            SkinThickness = (float)SkinThickness,
+            Insulin = (float)Insulin,
+            BMI = (float)BMI,
+            DiabetesPedigreeFunction = (float)DiabetesPedigreeFunction,
+            Age = (float)Age
+        };
 
-    var sortedScoresWithLabel = SampleClassification.PredictAllLabels(sampleData);
+        var predictions = SampleClassification.PredictAllLabels(sampleData);
 
-    result = $"Predicted as {sortedScoresWithLabel.First().Key} with score {(sortedScoresWithLabel.First().Value * 100):0.00}%";
-
-    StateHasChanged();
+        if (predictions != null && predictions.Any())
+        {
+            var top = predictions.First();
+            result = $"Predicted: {top.Key} ({(top.Value * 100):0.00}%)";
+        }
+        else
+        {
+            result = "No prediction returned.";
+        }
+    }
+    catch (Exception ex)
+    {
+        result = $"Error: {ex.Message}";
+    }
 }
 
 
