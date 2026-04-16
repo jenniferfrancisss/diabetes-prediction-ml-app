@@ -1,0 +1,96 @@
+﻿@using MudBlazor
+@using SampleClassification.ConsoleApp
+
+
+@page "/"
+@rendermode InteractiveServer
+
+<MudSlider T="double" Value="Pregnancies" ValueChanged="@Changepregnancy" Min="1" Max="20" Step="0.05" Color="Color.Info>Pregnancy: @Pregnancies.ToString()</MudSlider>
+<MudSlider T="double" Value="Glucose" ValueChanged="@ChangeGlucose"  Min="1" Max="200" Step="0.05" Color="Color.Error">Glucose: @Glucose.ToString("F2")</MudSlider>
+<MudSlider T="double" Value="BloodPressure" ValueChanged="@ChangeBloodPressure"  Min="0" Max="120" Step="0.05" Color="Color.Secondary">BloodPressure: @BloodPressure.ToString()</MudSlider>
+<MudSlider T="double" Value="SkinThickness" ValueChanged="@ChangeSkinThickness" Min="0" Max="50" Step="0.05" Color="Color.Tertiary">SkinThickness: @SkinThickness.ToString("F2")</MudSlider>
+<MudSlider T="double" Value="Insulin" ValueChanged="@ChangeInsulin" Min="0" Max="1000" Step="0.05" Color="Color.Info">Insulin: @Insulin.ToString()</MudSlider>
+<MudSlider T="double" Value="BMI" ValueChanged="@ChangeBMI"  Min="1" Max="50" Step="0.05" Color="Color.Error">BMI: @BMI.ToString("F2")</MudSlider>
+<MudSlider T="double" Value="DiabetesPedigreeFunction" ValueChanged="@ChangeDiabetesPedigreeFunction"  Min="0" Max="1" Step="0.005" Color="Color.Secondary">DiabetesPedigreeFunction: @DiabetesPedigreeFunction.ToString()</MudSlider>
+<MudSlider T="double" Value="Age" ValueChanged="@ChangeAge" Min="20" Max="70" Step="1" Color="Color.Tertiary">Age: @Age.ToString("F2")</MudSlider>
+
+
+
+<MudAlert Severity="Severity.Success">@result</MudAlert>
+
+
+@code {
+    public double Pregnancies { get; set; } = 5.9;
+    public double Glucose { get; set; } = 5.9;
+    public double BloodPressure { get; set; } = 5.9;
+    public double SkinThickness { get; set; } = 5.9;
+    public double Insulin { get; set; } = 5.9;
+    public double BMI { get; set; } = 5.9;
+    public double DiabetesPedigreeFunction { get; set; } = 5.9;
+    public double Age { get; set; } = 5.9;
+
+
+    public string result="";
+
+    public void Changepregnancy(double value){
+        Pregnancies = value;
+        DoCalculations();
+    }
+
+    public void ChangeGlucose(double value){
+        Glucose = value;
+        DoCalculations();
+    }
+
+    public void ChangeBloodPressure(double value){
+        BloodPressure = value;
+        DoCalculations();
+    }
+
+    public void ChangeSkinThickness(double value){
+        SkinThickness = value;
+        DoCalculations();
+    }
+
+    public void ChangeInsulin(double value){
+        Insulin = value;
+        DoCalculations();
+    }
+
+    public void ChangeBMI(double value){
+        BMI = value;
+        DoCalculations();
+    }
+
+    public void ChangeDiabetesPedigreeFunction(double value){
+        DiabetesPedigreeFunction = value;
+        DoCalculations();
+    }
+
+    public void ChangeAge(double value){
+        Age = value;
+        DoCalculations();
+    }
+
+
+
+
+
+    public void DoCalculations(){
+            SampleClassification.ModelInput sampleData = new SampleClassification.ModelInput()
+            {
+                Pregnancies = (float)Pregnancies,
+                Glucose = (float)Glucose,
+                BloodPressure = (float)BloodPressure,
+                SkinThickness = (float)SkinThickness,
+                Insulin = (float)Insulin,
+                BMI = (float)BMI,
+                DiabetesPedigreeFunction = (float)DiabetesPedigreeFunction,
+                Age = (float)Age
+            };
+            var sortedScoresWithLabel = SampleClassification.PredictAllLabels(sampleData);
+            result = $"Predicted as {sortedScoresWithLabel.First().Key} with the score {(sortedScoresWithLabel.First().Value*100.0).ToString("0.00")} %";
+            StateHasChanged();
+    }
+
+}
